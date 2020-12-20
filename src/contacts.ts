@@ -50,7 +50,9 @@ export class Contacts extends vscode.TreeItem {
 		public readonly contactId: string,
         public readonly contactName: string,
         public readonly contactFullName: string,
-        public readonly contactEmail: string,
+		public readonly contactEmail: string,
+		//public readonly directLinkToChat: vscode.Uri,
+		//public readonly channelList: [string],
 		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
 		public readonly command?: vscode.Command
 	) {
