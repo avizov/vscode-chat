@@ -12,14 +12,21 @@
   ],
   "contributes": {
     "viewsContainers": {
-      "activitybar": []
+      "activitybar": [
+        {
+          "id": "rocketchat-explorer",
+          "title": "Rocket Chat Explorer",
+          "icon": "resources/rocketchat.svg"
+        }
+      ],
+      "panel": []
     },
     "commands": [],
     "views": {
-      "explorer": [
+      "rocketchat-explorer": [
         {
-          "id": "chat-ui-explorer",
-          "name": "Alex Chat",
+          "id": "contactsList",
+          "name": "Rocket Chat",
           "icon": "resources/rocketchat.svg"
         }
       ]

@@ -6,6 +6,7 @@ export class contactsListProvider implements vscode.TreeDataProvider<Contacts> {
 
 	private _onDidChangeTreeData: vscode.EventEmitter<Contacts | undefined | void> = new vscode.EventEmitter<Contacts | undefined | void>();
 	readonly onDidChangeTreeData: vscode.Event<Contacts | undefined | void> = this._onDidChangeTreeData.event;
+	private contactsList : Contacts[] = [];
 
 	constructor(private workspaceRoot: string) {
 	}
@@ -25,22 +26,31 @@ export class contactsListProvider implements vscode.TreeDataProvider<Contacts> {
 		}
 
 		if (element) {
-			return Promise.resolve(this.getContactsList(path.join(this.workspaceRoot, element.contactId)));
+			return Promise.resolve(this.getContactsList(element.contactId));
 		} else {
-			return Promise.resolve(this.getContactsList(path.join(this.workspaceRoot)));			
+			return Promise.resolve(this.getContactsList());			
 		}
 	}
 
 	/**
 	 * Given the path to package.json, read all its dependencies and devDependencies.
 	 */
-	private getContactsList(contactId: string): Contacts[] {
-        const contact1 = new Contacts("1", "Alex", "Alex Avizov", "alex.avizov@sap.com", vscode.TreeItemCollapsibleState.Collapsed);
-        const contact2 = new Contacts("2", "Shimi", "Shimon Tal", "shimon.tal@sap.com", vscode.TreeItemCollapsibleState.Collapsed);
-        let contactsList : Contacts[] = [];
-        contactsList.push(contact1);        
-        contactsList.push(contact2);
-        return contactsList;				
+	private getContactsList(contactId?: string): Contacts[] {
+		if (this.contactsList.length === 0) {
+			const contact1 = new Contacts("1", "Alex", "Alex Avizov", "alex.avizov@sap.com", vscode.TreeItemCollapsibleState.Collapsed);
+			const contact2 = new Contacts("2", "Shimi", "Shimon Tal", "shimon.tal@sap.com", vscode.TreeItemCollapsibleState.Collapsed);
+			this.contactsList.push(contact1);        
+			this.contactsList.push(contact2);
+			return this.contactsList;
+		}
+		if (!!contactId) {
+			this.contactsList.find(element => {
+				if (contactId == element.contactId) {
+					return element;
+				}
+			});
+		} 
+		return [];           				
 	}
 }
 
