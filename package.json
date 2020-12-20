@@ -1,0 +1,41 @@
+{
+  "name": "vscode-chat",
+  "displayName": "Chat UI",
+  "description": "Chat UI",
+  "version": "0.0.1",
+  "author": "Alex",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "chat-ui",
+          "title": "Chat Application",
+          "icon": "resources/rocketchat.svg"
+        }
+      ]
+    },
+    "views": {
+      "chat-ui-explorer": [
+        {
+          "id": "chat-ui-explorer",
+          "name": ""
+        }
+      ]
+    }
+  },
+  "main": "./out/extension.js",
+  "scripts": {
+    "compile": "tsc -p ./",
+    "vscode:prepublish": "npm run compile"
+  },
+  "dependencies": {
+
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^3.0.2",
+    "@typescript-eslint/parser": "^3.0.2",
+    "eslint": "^7.1.0",
+    "typescript": "^4.0.2",
+    "@types/vscode": "^1.50.0"
+  }
+}
