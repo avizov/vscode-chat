@@ -37,8 +37,8 @@ export class contactsListProvider implements vscode.TreeDataProvider<Contacts> {
 	 */
 	private getContactsList(contactId?: string): Contacts[] {
 		if (this.contactsList.length === 0) {
-			const contact1 = new Contacts("1", "Alex", "Alex Avizov", "alex.avizov@sap.com", vscode.TreeItemCollapsibleState.Collapsed);
-			const contact2 = new Contacts("2", "Shimi", "Shimon Tal", "shimon.tal@sap.com", vscode.TreeItemCollapsibleState.Collapsed);
+			const contact1 = new Contacts("1", "Alex", "Alex Avizov", vscode.TreeItemCollapsibleState.Collapsed, new ContactDetails("1", "alex.avizov@sap.com", "active", vscode.TreeItemCollapsibleState.Expanded));
+			const contact2 = new Contacts("2", "Shimi", "Shimon Tal", vscode.TreeItemCollapsibleState.Collapsed, new ContactDetails("2", "shimon.tal@sap.com", "active", vscode.TreeItemCollapsibleState.Expanded));
 			this.contactsList.push(contact1);        
 			this.contactsList.push(contact2);
 			return this.contactsList;
@@ -60,11 +60,10 @@ export class Contacts extends vscode.TreeItem {
 		public readonly contactId: string,
         public readonly contactName: string,
         public readonly contactFullName: string,
-		public readonly contactEmail: string,
 		//public readonly directLinkToChat: vscode.Uri,
 		//public readonly channelList: [string],
 		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
-		public readonly command?: vscode.Command
+		public readonly contactdetails: ContactDetails
 	) {
 		super(contactId, collapsibleState);
 
@@ -78,4 +77,19 @@ export class Contacts extends vscode.TreeItem {
 	};
 
 	contextValue = 'contacts';
+}
+
+export class ContactDetails extends vscode.TreeItem {
+	constructor(
+		public readonly contactId: string,
+		public readonly contactEmail: string,
+		public readonly status: string,
+
+		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
+		public readonly command?: vscode.Command
+	) {
+		super(contactId, collapsibleState);
+	}
+	contextValue = 'contactsDetails';
+
 }
