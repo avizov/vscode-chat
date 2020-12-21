@@ -2,7 +2,7 @@
   "name": "vscode-chat",
   "displayName": "SAP AppStudio Chat UI",
   "description": "SAP AppStudio Chat UI",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "author": "Alex",
   "publisher": "Hackaton",
   "engines": {
