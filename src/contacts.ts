@@ -38,7 +38,7 @@ export class contactsListProvider implements vscode.TreeDataProvider<ContactsTI 
 				"alex.avizov@sap.com", 
 				true, 
 				new Date(Date.now()), 
-				"biginner", 
+				"beginner", 
 				3,
 				["Fiori", "CAP"], 
 				["FioriElementExtension", "MobileExtension"], 
@@ -98,11 +98,12 @@ export class ContactsTI extends vscode.TreeItem {
 		super(UserName, collapsibleState);
 		this.ContactDetails.push(new ContactDetailsTI(UserName, WorkspacesCount, LastConnected, Level, PackList, ExtensionList, vscode.TreeItemCollapsibleState.Expanded, this));
 		this.description = "The user " + this.UserName + " is active: " + this.Active;
+		this.iconPath = this.iconPath;
 	}
 
 	iconPath = {
-		light: path.join(__filename, '..', '..', 'resources', 'rocketchat.svg'),
-		dark: path.join(__filename, '..', '..', 'resources', 'rocketchat.svg')
+		light: path.join(__filename, '..', '..', 'resources', 'User.svg'),
+		dark: path.join(__filename, '..', '..', 'resources', 'User.svg')
 	};
 
 	contextValue = 'contacts';
@@ -130,8 +131,15 @@ export class ContactDetailsTI extends vscode.TreeItem {
 		ExtensionList.forEach(element => {
 			this.ContactExtensions.push(new ExtensionsTI(UserName, element, vscode.TreeItemCollapsibleState.None, this));
 		});
-		this.description = "Has " + this.WorkspacesCount + " dev spaces and he is an " + this.Level;
+		this.description = "Has " + this.WorkspacesCount + " dev spaces and he is ranked as: " + this.Level;
+		this.iconPath = this.iconPath;
 	}
+
+	iconPath = {
+		light: path.join(__filename, '..', '..', 'resources', 'contactDetails.svg'),
+		dark: path.join(__filename, '..', '..', 'resources', 'contactDetails.svg')
+	};
+
 	contextValue = 'contactsDetails';
 }
 
@@ -145,7 +153,14 @@ export class PacksTI extends vscode.TreeItem {
 		super(packName, collapsibleState)
 		this.label = "Use " + packName + " dev space type";
 
+	
+	this.iconPath = this.iconPath;
 	}
+
+	iconPath = {
+		light: path.join(__filename, '..', '..', 'resources', 'Package.svg'),
+		dark: path.join(__filename, '..', '..', 'resources', 'Package.svg')
+	};
 	contextValue = 'PacksDetails';
 }
 
