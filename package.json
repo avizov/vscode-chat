@@ -14,23 +14,54 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "rocketchat-explorer",
+          "id": "contactsList",
           "title": "SAP AppStudio Chat",
           "icon": "resources/chat.svg"
         }
       ],
       "panel": []
     },
-    "commands": [],
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "contactsList.openChat",
+          "when": "view == contactsList && viewItem == contacts",
+          "group": "inline"
+        },
+        {
+          "command": "contactsList.openChannelChat",
+          "when": "view == contactsList && viewItem == PacksDetails",
+          "group": "inline"
+        }
+      ]
+    },
     "views": {
-      "rocketchat-explorer": [
+      "contactsList": [
         {
           "id": "contactsList",
           "name": "SAP AppStudio Chat",
           "icon": "resources/chat.svg"
         }
       ]
-    }
+    },
+    "commands": [    
+      {
+        "command": "contactsList.openChat",
+        "title": "Open Chat",
+        "icon": {
+          "light": "resources/openChat.svg",
+          "dark": "resources/openChat.svg"
+        }
+      },
+      {
+        "command": "contactsList.openChannelChat",
+        "title": "Open Channel Chat",
+        "icon": {
+          "light": "resources/openChat.svg",
+          "dark": "resources/openChat.svg"
+        }
+      }
+    ]
   },
   "main": "./out/extension.js",
   "scripts": {
