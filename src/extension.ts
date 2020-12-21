@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { contactsListProvider, Contacts } from './contacts';
+import { contactsListProvider, ContactsTI } from './contacts';
 
 export function activate(context: vscode.ExtensionContext) {
 
