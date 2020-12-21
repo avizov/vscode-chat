@@ -62,11 +62,16 @@ export class contactsListProvider implements vscode.TreeDataProvider<ContactsTI>
 			return this.contactsList;
 		}
 		if (!!UserName) {
-			this.contactsList.find(element => {
+			let myList: ContactsTI[] = []; 
+			let _foundItem = this.contactsList.find(element => {
 				if (UserName == element.UserName) {
 					return element;
 				}
 			});
+			if (_foundItem) {
+				myList.push(_foundItem);
+				return myList;
+			}
 		} 
 		return [];           				
 	}
