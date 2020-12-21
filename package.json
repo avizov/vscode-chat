@@ -4,6 +4,7 @@
   "description": "SAP AppStudio Chat UI",
   "version": "0.0.1",
   "author": "Alex",
+  "publisher": "Hackaton",
   "engines": {
     "vscode": "^1.50.0"
   },
@@ -44,7 +45,7 @@
         }
       ]
     },
-    "commands": [    
+    "commands": [
       {
         "command": "contactsList.openChat",
         "title": "Open Chat",
@@ -66,7 +67,8 @@
   "main": "./out/extension.js",
   "scripts": {
     "compile": "tsc -p ./",
-    "vscode:prepublish": "npm run compile"
+    "vscode:prepublish": "npm run compile",
+		"build": "vsce package"
   },
   "dependencies": {
     "jsonc-parser": "^0.4.2",
@@ -83,6 +85,7 @@
     "@typescript-eslint/eslint-plugin": "^3.0.2",
     "@typescript-eslint/parser": "^3.0.2",
     "eslint": "^7.1.0",
-    "typescript": "^4.0.2"
+    "typescript": "^4.0.2",
+    "vsce": "^1.61.0"
   }
 }

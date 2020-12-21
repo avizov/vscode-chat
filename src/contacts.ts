@@ -46,17 +46,19 @@ export class contactsListProvider implements vscode.TreeDataProvider<ContactsTI 
 			}
 			for (let i = 0; i < userList.length; i++) {
 				const userListItem = userList[i];
-				const contact = new ContactsTI(
-					userListItem.userName, 
-					userListItem.active, 
-					userListItem.lastConnected, 
-					userListItem.level, 
-					userListItem.wsCount,
-					userListItem.packs, 
-					userListItem.optExtensions, 
-					vscode.TreeItemCollapsibleState.Collapsed
-				);
-				this.contactsList.push(contact);
+				if (Object.entries(userListItem).length > 0) {
+					const contact = new ContactsTI(
+						userListItem.userName, 
+						userListItem.active, 
+						userListItem.lastConnected, 
+						userListItem.level, 
+						userListItem.wsCount,
+						userListItem.packs, 
+						userListItem.optExtensions, 
+						vscode.TreeItemCollapsibleState.Collapsed
+					);
+					this.contactsList.push(contact);
+				}
 			}			    
 			return this.contactsList;
 		}
