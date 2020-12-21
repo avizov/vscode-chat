@@ -3,7 +3,7 @@ import { contactsListProvider, ContactsTI, PacksTI } from './contacts';
 
 export function activate(context: vscode.ExtensionContext) {
     vscode.window.createTreeView('contactsList', {
-        treeDataProvider: new contactsListProvider("bamba") //vscode.workspace.rootPath
+        treeDataProvider: new contactsListProvider(vscode.workspace.rootPath!) 
     });
     vscode.commands.registerCommand('contactsList.openChat', cbOpenChat);
     vscode.commands.registerCommand('contactsList.openChannelChat', cbOpenChannelChat);

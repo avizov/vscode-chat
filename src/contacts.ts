@@ -7,8 +7,9 @@ export class contactsListProvider implements vscode.TreeDataProvider<ContactsTI 
 	private _onDidChangeTreeData: vscode.EventEmitter<ContactsTI | ContactDetailsTI | PacksTI | ExtensionsTI | undefined | void> = new vscode.EventEmitter<ContactsTI | ContactDetailsTI | PacksTI | ExtensionsTI | undefined | void>();
 	readonly onDidChangeTreeData: vscode.Event<ContactsTI | ContactDetailsTI | PacksTI | ExtensionsTI | undefined | void> = this._onDidChangeTreeData.event;
 	private contactsList : ContactsTI[] = [];
-
+	public rootPath: string = "";
 	constructor(private workspaceRoot: string) {
+		this.rootPath = workspaceRoot;
 	}
 
 	refresh(): void {
@@ -34,7 +35,15 @@ export class contactsListProvider implements vscode.TreeDataProvider<ContactsTI 
 
 	private getTreeItemList(element?: ContactsTI | ContactDetailsTI | PacksTI | ExtensionsTI): ContactsTI[] | ContactDetailsTI[] | PacksTI[] | ExtensionsTI[] {
 		if (this.contactsList.length === 0) {
-			let userList = JSON.parse(fs.readFileSync(path.join(__filename, '..', '..',"mockData.json"), 'utf8'));
+			let userList;
+			try {
+				userList = JSON.parse(fs.readFileSync(path.join(this.rootPath,".userchat.json"), 'utf8'));
+			} catch (error) {
+				if (!userList) {
+					// Fallback - if it failed to read user data from the .userchat.json, read it from mock data
+					userList = JSON.parse(fs.readFileSync(path.join(__filename, '..', '..',"mockData.json"), 'utf8'));
+				}
+			}
 			for (let i = 0; i < userList.length; i++) {
 				const userListItem = userList[i];
 				const contact = new ContactsTI(
@@ -81,7 +90,7 @@ export class ContactsTI extends vscode.TreeItem {
 	constructor(
 		public readonly UserName: string,
 		public readonly Active: boolean,
-		public readonly LastConnected: Date,
+		public readonly LastConnected: string,
 		public readonly Level: string,
 		public readonly WorkspacesCount: number,
 		public readonly PackList: string[],
@@ -90,7 +99,6 @@ export class ContactsTI extends vscode.TreeItem {
 	) {
 		super(UserName, collapsibleState);
 		this.ContactDetails.push(new ContactDetailsTI(UserName, WorkspacesCount, LastConnected, Level, PackList, ExtensionList, vscode.TreeItemCollapsibleState.Expanded, this));
-		this.description = "The user " + this.UserName + " is active: " + this.Active;
 		if (this.Active) {
 			this.iconPath = this.iconPathActive;
 		} else {
@@ -118,7 +126,7 @@ export class ContactDetailsTI extends vscode.TreeItem {
 	constructor(
 		public readonly UserName: string,
 		public readonly WorkspacesCount: number,
-		public readonly LastConnected: Date,
+		public readonly LastConnected: string,
 		public readonly Level: string,
 		public readonly PackList: string[],
 		public readonly ExtensionList: string[],
@@ -133,7 +141,8 @@ export class ContactDetailsTI extends vscode.TreeItem {
 		ExtensionList.forEach(element => {
 			this.ContactExtensions.push(new ExtensionsTI(UserName, element, vscode.TreeItemCollapsibleState.None, this));
 		});
-		this.description = "," + this.WorkspacesCount + " devSpace, " + this.Level + " , LastConected: " + this.LastConnected;
+		this.label = "";
+		this.description = this.WorkspacesCount + " devSpace, " + this.Level + " , LastConected: " + this.LastConnected;
 		this.iconPath = this.iconPath;
 	}
 
