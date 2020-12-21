@@ -1,0 +1,38 @@
+[
+    {
+        "userName": "shimon.tal@sap.com",
+        "wsCount": 8,
+        "packs": [
+            "Basic"
+        ],
+        "optExtensions": [],
+        "lastConnected": "2020-12-21T07: 12: 17Z",
+        "level": "Expert",
+        "active": true
+    },
+    {
+        "userName": "rony.horvitz@sap.com",
+        "wsCount": 3,
+        "packs": [
+            "SAPFiori",
+            "Basic"
+        ],
+        "optExtensions": [
+            "w5g-wing/w5g-wing"
+        ],
+        "lastConnected": "2010-12-21T07: 12: 17Z",
+        "level": "Expert",
+        "active": false
+    },
+    {
+        "userName": "yariv.lifchuk@sap.com",
+        "wsCount": 1,
+        "packs": [
+            "Basic"
+        ],
+        "optExtensions": [],
+        "lastConnected": "2020-12-21T07: 12: 17Z",
+        "level": "Beginner",
+        "active": true
+    }
+]
