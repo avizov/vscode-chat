@@ -34,28 +34,21 @@ export class contactsListProvider implements vscode.TreeDataProvider<ContactsTI 
 
 	private getTreeItemList(element?: ContactsTI | ContactDetailsTI | PacksTI | ExtensionsTI): ContactsTI[] | ContactDetailsTI[] | PacksTI[] | ExtensionsTI[] {
 		if (this.contactsList.length === 0) {
-			const contact1 = new ContactsTI(
-				"alex.avizov@sap.com", 
-				true, 
-				new Date(Date.now()), 
-				"beginner", 
-				3,
-				["Fiori", "CAP"], 
-				["FioriElementExtension", "MobileExtension"], 
-				vscode.TreeItemCollapsibleState.Collapsed
-			);
-			const contact2 = new ContactsTI(
-				"shimon.tal@sap.com", 
-				true, 
-				new Date(Date.now()), 
-				"expert",
-				8, 
-				["Fiori", "CAP"], 
-				["FioriElementExtension", "MobileExtension"], 
-				vscode.TreeItemCollapsibleState.Collapsed
-			);
-			this.contactsList.push(contact1);        
-			this.contactsList.push(contact2);
+			let userList = JSON.parse(fs.readFileSync(path.join(__filename, '..', '..',"mockData.json"), 'utf8'));
+			for (let i = 0; i < userList.length; i++) {
+				const userListItem = userList[i];
+				const contact = new ContactsTI(
+					userListItem.UserName, 
+					userListItem.active, 
+					userListItem.lastConnected, 
+					userListItem.level, 
+					userListItem.wsCount,
+					userListItem.packs, 
+					userListItem.optExtensions, 
+					vscode.TreeItemCollapsibleState.Collapsed
+				);
+				this.contactsList.push(contact);
+			}			    
 			return this.contactsList;
 		}
 		if (element instanceof ContactsTI && !!element.UserName) {
@@ -98,12 +91,21 @@ export class ContactsTI extends vscode.TreeItem {
 		super(UserName, collapsibleState);
 		this.ContactDetails.push(new ContactDetailsTI(UserName, WorkspacesCount, LastConnected, Level, PackList, ExtensionList, vscode.TreeItemCollapsibleState.Expanded, this));
 		this.description = "The user " + this.UserName + " is active: " + this.Active;
-		this.iconPath = this.iconPath;
+		if (this.Active) {
+			this.iconPath = this.iconPathActive;
+		} else {
+			this.iconPath = this.iconPathInactive;
+		}
 	}
 
-	iconPath = {
-		light: path.join(__filename, '..', '..', 'resources', 'User.svg'),
-		dark: path.join(__filename, '..', '..', 'resources', 'User.svg')
+	iconPathActive = {
+		light: path.join(__filename, '..', '..', 'resources', 'Green_sphere.svg'),
+		dark: path.join(__filename, '..', '..', 'resources', 'Green_sphere.svg')
+	};
+
+	iconPathInactive = {
+		light: path.join(__filename, '..', '..', 'resources', 'Red_sphere.svg'),
+		dark: path.join(__filename, '..', '..', 'resources', 'Red_sphere.svg')
 	};
 
 	contextValue = 'contacts';
@@ -131,7 +133,7 @@ export class ContactDetailsTI extends vscode.TreeItem {
 		ExtensionList.forEach(element => {
 			this.ContactExtensions.push(new ExtensionsTI(UserName, element, vscode.TreeItemCollapsibleState.None, this));
 		});
-		this.description = "Has " + this.WorkspacesCount + " dev spaces and he is ranked as: " + this.Level;
+		this.description = "," + this.WorkspacesCount + " devSpace, " + this.Level + " , LastConected: " + this.LastConnected;
 		this.iconPath = this.iconPath;
 	}
 
@@ -151,7 +153,7 @@ export class PacksTI extends vscode.TreeItem {
 		public readonly parent: ContactDetailsTI
 	) {
 		super(packName, collapsibleState)
-		this.label = "Use " + packName + " dev space type";
+		this.label = "Use " + packName + " dev space";
 
 	
 	this.iconPath = this.iconPath;
