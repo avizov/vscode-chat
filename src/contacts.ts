@@ -2,10 +2,10 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-export class contactsListProvider implements vscode.TreeDataProvider<ContactsTI> {
+export class contactsListProvider implements vscode.TreeDataProvider<ContactsTI | ContactDetailsTI | PacksTI | ExtensionsTI> {
 
-	private _onDidChangeTreeData: vscode.EventEmitter<ContactsTI | undefined | void> = new vscode.EventEmitter<ContactsTI | undefined | void>();
-	readonly onDidChangeTreeData: vscode.Event<ContactsTI | undefined | void> = this._onDidChangeTreeData.event;
+	private _onDidChangeTreeData: vscode.EventEmitter<ContactsTI | ContactDetailsTI | PacksTI | ExtensionsTI | undefined | void> = new vscode.EventEmitter<ContactsTI | ContactDetailsTI | PacksTI | ExtensionsTI | undefined | void>();
+	readonly onDidChangeTreeData: vscode.Event<ContactsTI | ContactDetailsTI | PacksTI | ExtensionsTI | undefined | void> = this._onDidChangeTreeData.event;
 	private contactsList : ContactsTI[] = [];
 
 	constructor(private workspaceRoot: string) {
@@ -15,27 +15,24 @@ export class contactsListProvider implements vscode.TreeDataProvider<ContactsTI>
 		this._onDidChangeTreeData.fire();
 	}
 
-	getTreeItem(element: ContactsTI): vscode.TreeItem {
+	getTreeItem(element: ContactsTI | ContactDetailsTI | PacksTI | ExtensionsTI): vscode.TreeItem {
 		return element;
 	}
 
-	getChildren(element?: ContactsTI): Thenable<ContactsTI[]> {
+	getChildren(element?: ContactsTI | ContactDetailsTI | PacksTI | ExtensionsTI): Thenable<ContactsTI[] | ContactDetailsTI[] | PacksTI[] | ExtensionsTI[]> {
 		if (!this.workspaceRoot) {
 			vscode.window.showInformationMessage('No contacts in empty workspace');
 			return Promise.resolve([]);
 		}
 
 		if (element) {
-			return Promise.resolve(this.getContactsList(element.UserName));
+			return Promise.resolve(this.getTreeItemList(element));
 		} else {
-			return Promise.resolve(this.getContactsList());			
+			return Promise.resolve(this.getTreeItemList());			
 		}
 	}
 
-	/**
-	 * Given the path to package.json, read all its dependencies and devDependencies.
-	 */
-	private getContactsList(UserName?: string): ContactsTI[] {
+	private getTreeItemList(element?: ContactsTI | ContactDetailsTI | PacksTI | ExtensionsTI): ContactsTI[] | ContactDetailsTI[] | PacksTI[] | ExtensionsTI[] {
 		if (this.contactsList.length === 0) {
 			const contact1 = new ContactsTI(
 				"alex.avizov@sap.com", 
@@ -61,23 +58,33 @@ export class contactsListProvider implements vscode.TreeDataProvider<ContactsTI>
 			this.contactsList.push(contact2);
 			return this.contactsList;
 		}
-		if (!!UserName) {
-			let myList: ContactsTI[] = []; 
-			let _foundItem = this.contactsList.find(element => {
-				if (UserName == element.UserName) {
+		if (element instanceof ContactsTI && !!element.UserName) {
+			let ContactDetailsTIList: ContactDetailsTI[] = []; 
+			let _foundContactDetailsItem = element.ContactDetails.find(element => {
+				if (element.UserName == element.UserName) {
 					return element;
 				}
 			});
-			if (_foundItem) {
-				myList.push(_foundItem);
-				return myList;
+			if (_foundContactDetailsItem) {
+				ContactDetailsTIList.push(_foundContactDetailsItem);
+				return ContactDetailsTIList;
 			}
 		} 
+		if (element instanceof ContactDetailsTI) {
+			let _foundContactPacks = element.ContactPacks.filter(element => {
+				if (element.UserName == element.UserName) {
+					return element;
+				}
+			});
+			return _foundContactPacks;
+		}
 		return [];           				
 	}
 }
 
 export class ContactsTI extends vscode.TreeItem {
+	public ContactDetails: ContactDetailsTI[] = [];
+
 	constructor(
 		public readonly UserName: string,
 		public readonly Active: boolean,
@@ -86,13 +93,11 @@ export class ContactsTI extends vscode.TreeItem {
 		public readonly WorkspacesCount: number,
 		public readonly PackList: string[],
 		public readonly ExtensionList: string[],
-		//public readonly directLinkToChat: vscode.Uri,
-		//public readonly channelList: [string],
 		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
 	) {
 		super(UserName, collapsibleState);
-		new ContactDetailsTI(UserName, WorkspacesCount, LastConnected, Level, PackList, ExtensionList, vscode.TreeItemCollapsibleState.Expanded, this);
-		//this.description = this.UserName;
+		this.ContactDetails.push(new ContactDetailsTI(UserName, WorkspacesCount, LastConnected, Level, PackList, ExtensionList, vscode.TreeItemCollapsibleState.Expanded, this));
+		this.description = "The user " + this.UserName + " is active: " + this.Active;
 	}
 
 	iconPath = {
@@ -104,6 +109,9 @@ export class ContactsTI extends vscode.TreeItem {
 }
 
 export class ContactDetailsTI extends vscode.TreeItem {
+	public ContactPacks: PacksTI[] = [];
+	public ContactExtensions: ExtensionsTI[] = [];
+
 	constructor(
 		public readonly UserName: string,
 		public readonly WorkspacesCount: number,
@@ -117,33 +125,40 @@ export class ContactDetailsTI extends vscode.TreeItem {
 	) {
 		super(UserName, collapsibleState);
 		PackList.forEach(element => {
-			new PacksTI(element, vscode.TreeItemCollapsibleState.None, this);
+			this.ContactPacks.push(new PacksTI(UserName, element, vscode.TreeItemCollapsibleState.None, this));
 		});
 		ExtensionList.forEach(element => {
-			new ExtensionsTI(element, vscode.TreeItemCollapsibleState.None, this);
+			this.ContactExtensions.push(new ExtensionsTI(UserName, element, vscode.TreeItemCollapsibleState.None, this));
 		});
+		this.description = "Has " + this.WorkspacesCount + " dev spaces and he is an " + this.Level;
 	}
 	contextValue = 'contactsDetails';
 }
 
 export class PacksTI extends vscode.TreeItem {
 	constructor( 
+		public readonly UserName: string,
 		public readonly packName: string,
 		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
 		public readonly parent: ContactDetailsTI
 	) {
 		super(packName, collapsibleState)
+		this.label = "Use " + packName + " dev space type";
+
 	}
 	contextValue = 'PacksDetails';
 }
 
 export class ExtensionsTI extends vscode.TreeItem {
 	constructor( 
+		public readonly UserName: string,
 		public readonly extensionName: string,
 		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
 		public readonly parent: ContactDetailsTI
 	) {
 		super(extensionName, collapsibleState)
+		this.label = "Uses optional extension " + extensionName;
+
 	}
 	contextValue = 'OptionalExtensionsDetails';
 }
